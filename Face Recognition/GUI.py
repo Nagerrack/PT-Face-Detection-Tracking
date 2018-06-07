@@ -2,18 +2,31 @@ import tkinter as tk
 from tkinter.messagebox import showinfo
 import re
 import json
-
+import cv2
 
 # from main import create_manual_data, camera_recog
-
 
 # TO DO
 # text field intrukcja   V
 # zaladowac labele?      V
 # button help            V
 # sprawdzenie adresu     V
-# catch bledu z kamery   X
+# catch bledu z kamery   V
 # zamykanie okien na 'q' X
+
+def open_capture(address):
+    try:
+        vid = cv2.VideoCapture('http://' + str(address) + '/video')
+        if not vid.isOpened():
+            #raise NameError('Just a Dummy Exception, write your own')
+            popup_showinfo("Camera Error","Wrong Address, Camera Capture Error")
+            return None
+    except cv2.error as e:
+        print("cv2.error:", e)
+    except Exception as e:
+        print("Exception:", e)
+    return vid
+
 
 def delete_label(label):
     if not len(label) > 0:
@@ -80,7 +93,9 @@ def learning_mode():
     if not ip_regex(address):
         popup_showinfo("IP Error", "Invalid IP")
     else:
-        pass  # create_manual_data(address, newLabel)
+        capture = open_capture(address)
+        if capture is not None:
+            pass  # create_manual_data(address, newLabel)
 
 
 def detection_mode():
@@ -88,9 +103,12 @@ def detection_mode():
     if not ip_regex(address):
         popup_showinfo("IP Error", "Invalid IP")
     else:
-        pass  # camera_recog(address)
+        capture = open_capture(address)
+        if capture is not None:
+            pass  # camera_recog(address)
 
 
+#LAYOUT
 # Mode label        | Label Options Label
 # Learning Button   | List Labels Buttton
 # Detection Button  | Delete Labels Button
