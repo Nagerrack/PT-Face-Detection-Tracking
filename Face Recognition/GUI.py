@@ -4,22 +4,14 @@ import re
 import json
 import cv2
 
-# from main import create_manual_data, camera_recog
+from main import create_manual_data, camera_recog
 
-# TO DO
-# text field intrukcja   V
-# zaladowac labele?      V
-# button help            V
-# sprawdzenie adresu     V
-# catch bledu z kamery   V
-# zamykanie okien na 'q' X
 
 def open_capture(address):
     try:
         vid = cv2.VideoCapture('http://' + str(address) + '/video')
         if not vid.isOpened():
-            #raise NameError('Just a Dummy Exception, write your own')
-            popup_showinfo("Camera Error","Wrong Address, Camera Capture Error")
+            popup_showinfo("Camera Error", "Wrong Address, Camera Connection Error")
             return None
     except cv2.error as e:
         print("cv2.error:", e)
@@ -37,7 +29,7 @@ def delete_label(label):
     if label in data_set:
         del data_set[label]
     else:
-        popup_showinfo("Label Error",'Label not Found')
+        popup_showinfo("Label Error", 'Label not Found')
     f = open('./facerec_128D.txt', 'w');
     f.write(json.dumps(data_set))
 
@@ -84,9 +76,10 @@ def ip_regex(ip):
         return False
 
 
-def learning_mode():
+def learning_mode(textbox):
     address = addressEntry.get()
     newLabel = labelEntry.get()
+    fill_instruction(textbox, 'learningManual.txt')
     if not len(newLabel) > 0:
         popup_showinfo("Label Error", 'Label Empty')
         return
@@ -95,20 +88,21 @@ def learning_mode():
     else:
         capture = open_capture(address)
         if capture is not None:
-            pass  # create_manual_data(address, newLabel)
+            create_manual_data(capture, newLabel)
 
 
-def detection_mode():
+def detection_mode(textbox):
     address = addressEntry.get()
+    fill_instruction(textbox, 'detectionManual.txt')
     if not ip_regex(address):
         popup_showinfo("IP Error", "Invalid IP")
     else:
         capture = open_capture(address)
         if capture is not None:
-            pass  # camera_recog(address)
+            camera_recog(capture)
 
 
-#LAYOUT
+# LAYOUT
 # Mode label        | Label Options Label
 # Learning Button   | List Labels Buttton
 # Detection Button  | Delete Labels Button
@@ -119,21 +113,19 @@ def detection_mode():
 #             Main TextBox
 
 
-
 # INIT
 window = tk.Tk()
 window.title("Face Recognition")
 
-# window.geometry('200x300+100+100')
 
 # MODE
 modeLabel = tk.Label(window, text="Mode:")
 modeLabel.grid(row=0, column=0, sticky=tk.W, padx=20, pady=(10, 0))
 
-buttonLearning = tk.Button(window, text="Learning", width=20, command=learning_mode)
+buttonLearning = tk.Button(window, text="Learning", width=20, command=lambda : learning_mode(mainTextBox))
 buttonLearning.grid(row=1, column=0, sticky=tk.W, padx=20, pady=(0, 10))
 
-buttonDetection = tk.Button(window, text="Detection", width=20, command=detection_mode)
+buttonDetection = tk.Button(window, text="Detection", width=20, command=lambda :detection_mode(mainTextBox))
 buttonDetection.grid(row=2, column=0, sticky=tk.W, padx=20, pady=(0, 10))
 
 # ADDRESS
@@ -142,7 +134,7 @@ addressLabel.grid(row=3, column=0, sticky=tk.W, padx=20, pady=(10, 0))
 
 addressEntry = tk.Entry(window, width=25)
 addressEntry.grid(row=4, column=0, sticky=tk.W, padx=20)
-addressEntry.insert(tk.END, '192.168.137.218:8080')
+addressEntry.insert(tk.END, '192.168.137.177:8080')
 
 # NEW DATA LABEL
 labelLabel = tk.Label(window, text="Label:")
@@ -173,14 +165,9 @@ buttonManual = tk.Button(window, text="Display Intructions", width=20,
                          command=lambda: fill_instruction(mainTextBox, 'instruction.txt'))
 buttonManual.grid(row=4, column=1, sticky=tk.W, padx=20, pady=(0, 10))
 
-
 # ----------------
 
 fill_instruction(mainTextBox, 'instruction.txt')
 
-
-# ip_regex('10.10')
-# ip_regex('192.168.137.218:8080')
-# ip_regex('999.999.999.999:8080')
 
 window.mainloop()
