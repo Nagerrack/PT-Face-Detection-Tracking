@@ -1,0 +1,23 @@
+INSTRUCTIONS
+Face Recognition
+
+Modes
+  Learning
+    - add new face to database 
+      using IP camera
+
+  Detection
+    - enable face detection via IP camera
+
+Fields
+  Address
+    - enter address in a field 
+      (format: [ip]:[port])
+
+  Label (in learning mode)
+    - enter a label that will refer to a new
+      person added to database
+ 
+  Label (in deletion)
+    - enter a label that will refer to a
+      person deleted from database
