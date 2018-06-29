@@ -4,8 +4,7 @@ import re
 import json
 import cv2
 
-from main import create_manual_data, camera_recog
-
+from main import addNewPerson, identifyPeople
 
 def open_capture(address):
     try:
@@ -66,7 +65,7 @@ def popup_showinfo(winname, message):
 
 def ip_regex(ip):
     patternIP = re.compile(
-        "^[0-2]+[0-9]{1,2}\.[0-2]+[0-9]{1,2}\.[0-2]+[0-9]{1,2}\.[0-2]+[0-9]{1,2}:\d{1,5}$")  # "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$")
+        "^[1-2]?[0-9]{1,2}\.[1-2]?[0-9]{1,2}\.[1-2]?[0-9]{1,2}\.[1-2]?[0-9]{1,2}:\d{1,5}$")  # "^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}:\d{1,5}$")
     valid = patternIP.match(ip)
     if valid:
         print("Valid IP")
@@ -88,7 +87,7 @@ def learning_mode(textbox):
     else:
         capture = open_capture(address)
         if capture is not None:
-            create_manual_data(capture, newLabel)
+            addNewPerson(capture, newLabel)
 
 
 def detection_mode(textbox):
@@ -99,7 +98,7 @@ def detection_mode(textbox):
     else:
         capture = open_capture(address)
         if capture is not None:
-            camera_recog(capture)
+            identifyPeople(capture)
 
 
 # LAYOUT
@@ -117,6 +116,7 @@ def detection_mode(textbox):
 window = tk.Tk()
 window.title("Face Recognition")
 
+# window.geometry('200x300+100+100')
 
 # MODE
 modeLabel = tk.Label(window, text="Mode:")
@@ -169,5 +169,8 @@ buttonManual.grid(row=4, column=1, sticky=tk.W, padx=20, pady=(0, 10))
 
 fill_instruction(mainTextBox, 'instruction.txt')
 
+# ip_regex('10.10')
+# ip_regex('192.168.137.218:8080')
+# ip_regex('999.999.999.999:8080')
 
 window.mainloop()

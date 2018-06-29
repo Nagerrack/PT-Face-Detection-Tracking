@@ -4,10 +4,15 @@ Face Recognition
 Modes
   Learning
     - add new face to database 
-      using IP camera
+      using IP camera point
+      camera to the face and
+      tilt you head slowly
+      to the sides
 
   Detection
     - enable face detection via IP camera
+
+Press 'q' to end Detection or Learning
 
 Fields
   Address
